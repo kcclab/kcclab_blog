@@ -1,0 +1,77 @@
+---
+layout: default
+---
+<!-- Just some nice to have styles for the pager buttons -->
+<style>
+  ul.pager { text-align: center; list-style: none; }
+  ul.pager li {display: inline;border: 1px solid black; padding: 10px; margin: 5px;}
+</style>
+
+<div class="home">
+
+  <h1 class="page-heading">Posts</h1>
+  
+  {{ content }}
+
+  <ul class="post-list">
+    <!-- 
+        Here is the main paginator logic called.
+        All calls to site.posts should be replaced by paginator.posts 
+    -->
+    {% for post in paginator.posts %}
+      <li>
+        <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
+
+        <h2>
+          <a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
+        </h2>
+      </li>
+    {% endfor %}
+  </ul>
+  
+  <!-- 
+    Showing buttons to move to the next and to the previous list of posts (pager buttons).
+  -->
+  {% if paginator.total_pages > 1 %}
+    <div class="pagination">
+        {% if paginator.total_pages <= 5 %}
+            {% assign first = 1 %}
+            {% assign last = paginator.total_pages %}
+        {% else %}
+            {% assign first = paginator.page | minus: 2 %}
+            {% if first < 1 %}
+                {% assign first = 1 %}
+            {% endif %}
+            {% assign last = first | plus: 4 %}
+            {% if last > paginator.total_pages %}
+                {% assign last = paginator.total_pages %}
+            {% endif %}
+        {% endif %}
+        {% if paginator.previous_page %}
+            <li id="page-prev"><a href="{{ site.baseurl }}{{ paginator.previous_page_path }}"><span class="sr-only">Previous Page</span></a>
+            </li>
+        {% else %}
+            <li id="page-prev" class="disabled"><span class="sr-only">No Previous Page</span></li>
+        {% endif %}
+        {% for p in (first..last) %}
+            {% if p == paginator.page %}
+                <li class="page-number active">{{ p }}</li>
+                {% elsif p == 1 %}
+                <li class="page-number"><a href="{{ site.baseurl }}/">{{ p }}</a></li>
+            {% else %}
+                <li class="page-number"><a
+                            href="{{ site.baseurl }}{{ site.paginate_path | replace: ':num', p }}">{{ p }}</a></li>
+            {% endif %}
+        {% endfor %}
+        {% if paginator.next_page %}
+            <li id="page-next"><a href="{{ site.baseurl }}{{ paginator.next_page_path }}"><span class="sr-only">Next Page</span></a>
+            </li>
+        {% else %}
+            <li id="page-next" class="disabled"><span class="sr-only">No Next Page</span></li>
+        {% endif %}
+    </div>
+  {% endif %}
+
+  <!--<p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | relative_url }}">via RSS</a></p>-->
+
+</div>
